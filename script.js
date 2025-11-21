@@ -28,15 +28,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // デモプレーヤー機能
    const audioData = {
     yakushima: {
-        src: './assets/audio/yakushima.mp3',
+        src: 'https://soranaaudio.github.io/sorana.github.io/assets/audio/yakushima.mp3',
         duration: 94
     },
     okinawa: {
-        src: './assets/audio/okinawa.mp3',
+        src: 'https://soranaaudio.github.io/sorana.github.io/assets/audio/okinawa.mp3',
         duration: 132
     },
     kyoto: {
-        src: './assets/audio/kyoto.mp3',
+        src: 'https://soranaaudio.github.io/sorana.github.io/assets/audio/kyoto.mp3',
         duration: 90
     }
 };
