@@ -71,9 +71,48 @@ body {
     align-items: center;
     justify-content: center;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-size: 400% 400%;
+    animation: gradientFlow 15s ease infinite;
     color: white;
     text-align: center;
     padding: 80px 20px 20px;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 50%, rgba(138, 92, 246, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.2) 0%, transparent 50%);
+    animation: floatingShapes 20s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes gradientFlow {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes floatingShapes {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.5;
+    }
+    50% {
+        transform: translate(30px, -30px) scale(1.1);
+        opacity: 0.3;
+    }
 }
 
 .hero-content {
@@ -150,7 +189,8 @@ body {
 /* 共感セクション */
 .empathy {
     padding: 100px 20px;
-    background: var(--color-bg-light);
+    background: linear-gradient(180deg, #EFF6FF 0%, #DBEAFE 100%);
+    position: relative;
 }
 
 .empathy-grid {
@@ -176,6 +216,21 @@ body {
 .product {
     padding: 100px 20px;
     text-align: center;
+    background: white;
+    position: relative;
+}
+
+.product::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(74, 159, 216, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(27, 75, 107, 0.03) 0%, transparent 50%);
+    pointer-events: none;
 }
 
 .section-title {
@@ -203,12 +258,13 @@ body {
     padding: 40px 20px;
     background: white;
     border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     transition: transform 0.3s ease;
 }
 
 .feature:hover {
     transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
 .feature h3 {
@@ -227,9 +283,21 @@ body {
 /* CTA */
 .cta {
     padding: 100px 20px;
-    background: var(--color-primary);
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #1d4ed8 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 10s ease infinite;
     color: white;
     text-align: center;
+    position: relative;
+}
+
+@keyframes gradientShift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
 }
 
 .cta h2 {
@@ -262,7 +330,8 @@ body {
 /* デモプレーヤー */
 .demo {
     padding: 100px 20px;
-    background: var(--color-bg-light);
+    background: linear-gradient(180deg, #F5F3FF 0%, #EDE9FE 100%);
+    position: relative;
 }
 
 .demo-subtitle {
@@ -291,7 +360,7 @@ body {
 
 .player-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
 .player-image {
@@ -392,8 +461,8 @@ body {
 .footer {
     padding: 40px 20px;
     text-align: center;
-    background: var(--color-bg-light);
-    color: var(--color-text);
+    background: #1F2937;
+    color: #9CA3AF;
 }
 
 /* レスポンシブ */
