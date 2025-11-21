@@ -366,8 +366,13 @@ body {
 .player-image {
     position: relative;
     background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
-    padding: 60px 20px 40px;
+    height: 150px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0 20px 20px;
     text-align: center;
+    overflow: hidden;
 }
 
 .player-bg-image {
