@@ -27,4 +27,4 @@ sorana.audio@gmail.com
 
 ---
 
-Built with ❤️ in Japan
+© 2025 Sorana
