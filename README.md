@@ -25,4 +25,4 @@
 
 ---
 
-© 2024 Sorana. Built with ❤️ in Japan.
+© 2025 Sorana. Built with ❤️ in Japan.
