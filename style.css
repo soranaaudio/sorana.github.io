@@ -141,11 +141,14 @@ body {
 }
 
 .hero-title {
-    font-size: clamp(32px, 5vw, 56px);
+    font-size: clamp(20px, 6vw, 56px);
     font-weight: 700;
     margin-bottom: 20px;
     line-height: 1.4;
-    white-space: nowrap;
+    white-space: normal;
+    word-break: keep-all;
+    padding: 0 15px;
+    text-align: center;
 }
 
 .hero-subtitle {
@@ -518,15 +521,35 @@ body {
 /* レスポンシブ */
 @media (max-width: 768px) {
     .hero-title {
-        font-size: 32px;
+        font-size: 24px;
+        white-space: normal;
+        padding: 0 20px;
+    }
+    
+    .hero-subtitle {
+        font-size: 14px;
+        padding: 0 20px;
     }
     
     .nav {
         padding: 15px 20px;
     }
     
+    .nav-logo {
+        height: 30px;
+    }
+    
+    .nav-button {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+    
     .empathy-grid,
     .features {
+        grid-template-columns: 1fr;
+    }
+    
+    .players {
         grid-template-columns: 1fr;
     }
 }
