@@ -552,6 +552,35 @@ body {
     .players {
         grid-template-columns: 1fr;
     }
+    .hero-subtitle {
+        font-size: 14px;
+        padding: 0 20px;
+        word-break: keep-all;
+        overflow-wrap: break-word;
+    }
+    
+    .demo h2 {
+        font-size: 24px;
+        padding: 0 20px;
+        word-break: keep-all;
+    }
+    
+    .demo-subtitle {
+        font-size: 14px;
+        padding: 0 20px;
+        word-break: keep-all;
+    }
+    
+    .cta h2 {
+        font-size: 24px;
+        padding: 0 20px;
+    }
+    
+    .cta p {
+        font-size: 14px;
+        padding: 0 20px;
+        word-break: keep-all;
+    }
 }
 
 /* スクロールアニメーション */
