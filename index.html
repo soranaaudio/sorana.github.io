@@ -108,6 +108,45 @@
         </div>
     </section>
 
+<!-- 認証セクション（新規追加） -->
+<section id="auth" class="auth-section">
+    <div class="container">
+        <h2 class="section-title">Soranaを始める</h2>
+        
+        <div class="auth-container">
+            <!-- ログインフォーム -->
+            <div class="auth-form">
+                <h3>ログイン</h3>
+                <form id="login-form">
+                    <input type="email" id="login-email" placeholder="メールアドレス" required>
+                    <input type="password" id="login-password" placeholder="パスワード" required>
+                    <button type="submit" class="auth-button">ログイン</button>
+                </form>
+            </div>
+
+            <!-- 登録フォーム -->
+            <div class="auth-form">
+                <h3>新規登録</h3>
+                <form id="signup-form">
+                    <input type="email" id="signup-email" placeholder="メールアドレス" required>
+                    <input type="password" id="signup-password" placeholder="パスワード（6文字以上）" required>
+                    <button type="submit" class="auth-button">登録</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ユーザーセクション（新規追加） -->
+<section id="user-section" class="user-section" style="display:none;">
+    <div class="container">
+        <h2 class="section-title">ようこそ、Soranaへ</h2>
+        <p class="user-info">ログイン中: <span id="user-email"></span></p>
+        <button id="logout-btn" class="auth-button">ログアウト</button>
+        <p class="user-description">ここから旅の音風景を作成できます（開発中）</p>
+    </div>
+</section>
+
 <!-- デモプレーヤー -->
     <section id="demo" class="demo">
         <div class="container">
@@ -210,5 +249,7 @@
     </footer>
 
     <script src="script.js"></script>
+    <!-- Firebase & App Scripts -->
+    <script type="module" src="src/app.js"></script>
 </body>
 </html>
