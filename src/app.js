@@ -1,5 +1,6 @@
 // src/app.js
 import { signUp, signIn, logOut, watchAuthState } from './auth.js';
+import { initGoogleAuth, signInWithGoogle, getPhotos } from './googlePhotos.js';
 
 // DOM要素の取得
 const loginForm = document.getElementById('login-form');
@@ -8,6 +9,20 @@ const logoutBtn = document.getElementById('logout-btn');
 const authSection = document.getElementById('auth');
 const userSection = document.getElementById('user-section');
 const userEmail = document.getElementById('user-email');
+const googleSigninBtn = document.getElementById('google-signin-btn');
+const photosStatus = document.getElementById('photos-status');
+
+// Google認証の初期化
+window.addEventListener('load', () => {
+  initGoogleAuth();
+});
+
+// Google Photosサインインボタン
+if (googleSigninBtn) {
+  googleSigninBtn.addEventListener('click', async () => {
+    signInWithGoogle();
+  });
+}
 
 // ログインフォーム送信
 if (loginForm) {
@@ -19,7 +34,6 @@ if (loginForm) {
     const result = await signIn(email, password);
     if (result.success) {
       alert('ログインしました！');
-      // フォームをリセット
       loginForm.reset();
     } else {
       alert('ログインエラー: ' + result.error);
@@ -37,7 +51,6 @@ if (signupForm) {
     const result = await signUp(email, password);
     if (result.success) {
       alert('登録完了しました！');
-      // フォームをリセット
       signupForm.reset();
     } else {
       alert('登録エラー: ' + result.error);

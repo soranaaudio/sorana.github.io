@@ -763,3 +763,51 @@ body {
         padding: 60px 20px;
     }
 }
+
+/* ==========================================
+   Google Photos連携セクション
+========================================== */
+.google-photos-section {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 12px;
+    margin: 30px auto;
+    max-width: 500px;
+}
+
+.google-photos-section h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.google-photos-description {
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+    opacity: 0.9;
+}
+
+.google-button {
+    background: white;
+    color: #1a73e8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.google-button:hover {
+    background: #66a7e8;
+}
+
+.google-icon {
+    font-size: 1.3rem;
+}
+
+.photos-status {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(76, 175, 80, 0.2);
+    border-radius: 8px;
+    font-weight: 600;
+}

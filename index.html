@@ -40,6 +40,10 @@
     
     <!-- CSS -->
     <link rel="stylesheet" href="style.css">
+
+    <!-- Google Identity Services -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+    
 </head>
 
 
@@ -224,8 +228,22 @@
     <div class="container">
         <h2 class="section-title">ようこそ、Soranaへ</h2>
         <p class="user-info">ログイン中: <span id="user-email"></span></p>
+        
+        <!-- Google Photos連携ボタン -->
+        <div class="google-photos-section">
+            <h3>Google Photosと連携</h3>
+            <p class="google-photos-description">旅の写真から音風景を生成するために、Google Photosへのアクセスを許可してください。</p>
+            <button id="google-signin-btn" class="auth-button google-button">
+                <span class="google-icon">📷</span>
+                Google Photosと連携
+            </button>
+            <div id="photos-status" class="photos-status" style="display:none;">
+                <p>✅ Google Photosに接続済み</p>
+            </div>
+        </div>
+        
         <button id="logout-btn" class="auth-button">ログアウト</button>
-        <p class="user-description">ここから旅の音風景を作成できます（開発中）</p>
+        <p class="user-description">音風景生成機能は開発中です</p>
     </div>
 </section>
 
