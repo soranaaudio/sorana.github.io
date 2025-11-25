@@ -49,8 +49,21 @@ export const signInWithGoogle = () => {
 };
 
 // 認証成功後の処理
-const onAuthSuccess = () => {
+const onAuthSuccess = async () => {
   alert('Google Photos への接続に成功しました！');
+  
+  // トークン情報を検証
+  try {
+    const tokenInfoResponse = await fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${accessToken}`);
+    const tokenInfo = await tokenInfoResponse.json();
+    console.log('=== トークン情報の詳細 ===');
+    console.log('トークン情報:', tokenInfo);
+    console.log('スコープ:', tokenInfo.scope);
+    console.log('======================');
+  } catch (error) {
+    console.error('トークン情報の取得エラー:', error);
+  }
+  
   getPhotos();
 };
 
