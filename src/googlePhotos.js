@@ -8,26 +8,26 @@ let accessToken = null;
 export const initGoogleAuth = () => {
   console.log('Google認証を初期化中...');
   
-  // Google Identity Services のスクリプトが読み込まれているか確認
   if (typeof google !== 'undefined' && google.accounts) {
     tokenClient = google.accounts.oauth2.initTokenClient({
       client_id: GOOGLE_CLIENT_ID,
       scope: GOOGLE_SCOPES,
       callback: (response) => {
+        console.log('Google認証レスポンス:', response); // 詳細ログ追加
+        
         if (response.access_token) {
           accessToken = response.access_token;
           console.log('Google認証成功！');
-          // 認証成功後の処理
           onAuthSuccess();
         } else if (response.error) {
-          console.error('Google認証エラー:', response.error);
+          console.error('Google認証エラー詳細:', response); // 詳細ログ追加
+          alert('認証エラー: ' + response.error + '\n詳細: ' + (response.error_description || ''));
         }
       },
     });
     console.log('Google認証クライアント初期化完了');
   } else {
     console.error('Google Identity Services が読み込まれていません');
-    // 少し待ってから再試行
     setTimeout(initGoogleAuth, 1000);
   }
 };
@@ -46,7 +46,6 @@ export const signInWithGoogle = () => {
 // 認証成功後の処理
 const onAuthSuccess = () => {
   alert('Google Photos への接続に成功しました！');
-  // 写真を取得してみる
   getPhotos();
 };
 
