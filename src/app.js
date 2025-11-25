@@ -5,7 +5,7 @@ import { signUp, signIn, logOut, watchAuthState } from './auth.js';
 const loginForm = document.getElementById('login-form');
 const signupForm = document.getElementById('signup-form');
 const logoutBtn = document.getElementById('logout-btn');
-const authSection = document.getElementById('auth-section');
+const authSection = document.getElementById('auth');
 const userSection = document.getElementById('user-section');
 const userEmail = document.getElementById('user-email');
 
@@ -19,6 +19,8 @@ if (loginForm) {
     const result = await signIn(email, password);
     if (result.success) {
       alert('ログインしました！');
+      // フォームをリセット
+      loginForm.reset();
     } else {
       alert('ログインエラー: ' + result.error);
     }
@@ -35,6 +37,8 @@ if (signupForm) {
     const result = await signUp(email, password);
     if (result.success) {
       alert('登録完了しました！');
+      // フォームをリセット
+      signupForm.reset();
     } else {
       alert('登録エラー: ' + result.error);
     }
