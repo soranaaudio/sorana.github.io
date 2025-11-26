@@ -141,17 +141,26 @@ body {
         right: 0;
     }
     
+    /* 全てのナビゲーション要素を統一 */
     .nav-link,
-    .nav-button {
+    .nav-button,
+    .logout-nav-button {
         width: 100%;
         text-align: left;
         padding: 1rem 2rem;
         border-radius: 0;
         background: transparent;
+        border: none;
+        color: #4a5568;
+        font-weight: 500;
     }
     
-     .logout-nav-button {
-        border: none; /* 追加 */
+    .nav-link:hover,
+    .nav-button:hover,
+    .logout-nav-button:hover {
+        background: rgba(102, 126, 234, 0.1);
+        color: #667eea;
+        transform: none;
     }
 }
 
