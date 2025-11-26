@@ -14,6 +14,7 @@ const userEmail = document.getElementById('user-email');
 const googleSigninBtn = document.getElementById('google-signin-btn');
 const photosStatus = document.getElementById('photos-status');
 const logoutNavBtn = document.querySelector('.logout-nav-button');
+const prefectureSelect = document.getElementById('prefecture-select');
 
 // Google認証の初期化
 window.addEventListener('load', () => {
@@ -376,25 +377,32 @@ if (locationInput) {
 if (dateInput) {
   dateInput.addEventListener('input', checkFormValid);
 }
+// 都道府県選択時（ここに追加）
+if (prefectureSelect) {
+  prefectureSelect.addEventListener('change', checkFormValid);
+}
 
 // フォームの有効性チェック
 function checkFormValid() {
   const isValid = selectedImageFile && 
+                  prefectureSelect.value &&
                   locationInput.value.trim() && 
                   dateInput.value;
   postSaveBtn.disabled = !isValid;
 }
 
 // 投稿保存
+// 投稿保存
 if (postSaveBtn) {
   postSaveBtn.addEventListener('click', async () => {
     const user = auth.currentUser;
     if (!user) return;
     
+    const prefecture = document.getElementById('prefecture-select').value;
     const location = locationInput.value.trim();
     const date = dateInput.value;
     
-    if (!selectedImageFile || !location || !date) {
+    if (!selectedImageFile || !prefecture || !location || !date) {
       alert('全ての項目を入力してください');
       return;
     }
@@ -404,7 +412,7 @@ if (postSaveBtn) {
     postSaveBtn.textContent = '投稿中...';
     
     try {
-      const result = await createPost(user.uid, selectedImageFile, location, date);
+      const result = await createPost(user.uid, selectedImageFile, prefecture, location, date);
       
       if (result.success) {
         alert('投稿しました！');
@@ -455,3 +463,4 @@ async function loadUserPosts(userId) {
     postsGrid.innerHTML = '<p class="no-posts">まだ投稿がありません</p>';
   }
 }
+

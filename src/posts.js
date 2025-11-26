@@ -49,7 +49,7 @@ function compressImage(file, maxWidth = 1200, quality = 0.8) {
 }
 
 // 投稿を作成
-export const createPost = async (userId, imageFile, location, date) => {
+export const createPost = async (userId, imageFile, prefecture, location, date) => {
   try {
     // 画像を圧縮
     const compressedImage = await compressImage(imageFile);
@@ -68,6 +68,7 @@ export const createPost = async (userId, imageFile, location, date) => {
     const postData = {
       userId: userId,
       imageUrl: imageUrl,
+      prefecture: prefecture, // 追加
       location: location,
       date: date,
       createdAt: serverTimestamp(),
