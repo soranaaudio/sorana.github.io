@@ -116,3 +116,6 @@ function displayPhotos(photos) {
   console.log(`${photos.length}枚の写真を表示します`);
   // TODO: UIに写真を表示する処理を実装
 }
+
+// getPhotos関数をエクスポート
+export { getPhotos };
