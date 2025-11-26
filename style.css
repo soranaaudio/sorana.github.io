@@ -66,6 +66,8 @@ body {
     display: flex;
     gap: 2rem;
     align-items: center;
+    flex-wrap: nowrap;
+    white-space: nowrap;
 }
 
 .nav-link {
@@ -126,9 +128,24 @@ body {
 }
 
 @media (max-width: 768px) {
+    .nav-container {
+        padding: 0 1rem;
+    }
+    
+    .nav-links {
+        gap: 0.5rem;
+    }
+    
+    .nav-link {
+        padding: 0.4rem 0.6rem;
+        font-size: 12px;
+    }
     .nav-button {
         padding: 0.4rem 0.8rem;
         font-size: 12px;
+    }
+    .nav-logo {
+        height: 30px;
     }
 }
 
