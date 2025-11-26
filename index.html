@@ -48,13 +48,21 @@
 
 
 <body>
- <!-- ナビゲーション -->
+<!-- ナビゲーション -->
 <nav class="nav">
     <div class="nav-container">
         <a href="index.html" class="nav-brand">
             <img src="./assets/images/logo.png" alt="Sorana" class="nav-logo">
         </a>
-        <div class="nav-links">
+        
+        <!-- ハンバーガーメニューボタン（スマホのみ表示） -->
+        <button class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        
+        <div class="nav-links" id="nav-links">
             <a href="index.html" class="nav-link">ホーム</a>
             <a href="mypage.html" class="nav-link">マイページ</a>
             <button id="logout-btn" class="nav-button logout-nav-button" style="display:none;">ログアウト</button>

@@ -150,3 +150,33 @@ const observer = new IntersectionObserver((entries) => {
 fadeInElements.forEach(element => {
     observer.observe(element);
 });
+
+// ハンバーガーメニュー
+document.addEventListener('DOMContentLoaded', () => {
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('nav-links');
+    
+    if (hamburger && navLinks) {
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+        
+        // メニュー外をクリックしたら閉じる
+        document.addEventListener('click', (e) => {
+            if (!hamburger.contains(e.target) && !navLinks.contains(e.target)) {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('active');
+            }
+        });
+        
+        // リンクをクリックしたら閉じる
+        const links = navLinks.querySelectorAll('a, button');
+        links.forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('active');
+            });
+        });
+    }
+});
