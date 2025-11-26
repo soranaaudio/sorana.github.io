@@ -23,4 +23,7 @@ export const auth = getAuth(app);
 // Firestoreを初期化
 export const db = getFirestore(app);
 
+// Storageを初期化（追加）
+export const storage = getStorage(app);
+
 export default app;
