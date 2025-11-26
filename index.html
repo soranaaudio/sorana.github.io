@@ -223,13 +223,48 @@
     </div>
 </section>
 
-<!-- ユーザーセクション（新規追加） -->
+<!-- ユーザーセクション（改善版） -->
 <section id="user-section" class="user-section" style="display:none;">
     <div class="container">
-        <h2 class="section-title">ようこそ、Soranaへ</h2>
-        <p class="user-info">ログイン中: <span id="user-email"></span></p>
+        <h2 class="section-title">マイページ</h2>
         
-        <!-- Google Photos連携ボタン -->
+        <!-- プロフィールカード -->
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="profile-icon">
+                    <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                        <circle cx="32" cy="32" r="32" fill="#667eea"/>
+                        <text x="32" y="40" font-size="28" fill="white" text-anchor="middle" font-weight="600">U</text>
+                    </svg>
+                </div>
+                <div class="profile-info">
+                    <h3 id="user-name">ユーザー</h3>
+                    <p id="user-email-display"></p>
+                    <p class="join-date">アカウント作成日: <span id="join-date">-</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 統計情報 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📷</div>
+                <div class="stat-value" id="photos-count">0</div>
+                <div class="stat-label">連携済み写真</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎵</div>
+                <div class="stat-value" id="soundscapes-count">0</div>
+                <div class="stat-label">生成した音風景</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-value" id="last-login">今日</div>
+                <div class="stat-label">最終ログイン</div>
+            </div>
+        </div>
+
+        <!-- Google Photos連携 -->
         <div class="google-photos-section">
             <h3>Google Photosと連携</h3>
             <p class="google-photos-description">旅の写真から音風景を生成するために、Google Photosへのアクセスを許可してください。</p>
@@ -241,8 +276,12 @@
                 <p>✅ Google Photosに接続済み</p>
             </div>
         </div>
+
+        <!-- アクション -->
+        <div class="user-actions">
+            <button id="logout-btn" class="auth-button logout-button">ログアウト</button>
+        </div>
         
-        <button id="logout-btn" class="auth-button">ログアウト</button>
         <p class="user-description">音風景生成機能は開発中です</p>
     </div>
 </section>
