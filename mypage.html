@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>マイページ - Sorana</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+
+<body>
+    <!-- ナビゲーション -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">
+                <img src="./assets/images/logo.png" alt="Sorana" class="nav-logo">
+            </a>
+            <div class="nav-links">
+                <a href="index.html#demo" class="nav-link">音を聴く</a>
+                <a href="mypage.html" class="nav-link">マイページ</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 認証セクション -->
+    <section id="auth" class="auth-section">
+        <div class="container">
+            <h2 class="section-title">ログイン</h2>
+            
+            <div class="auth-container">
+                <!-- ログインフォーム -->
+                <div class="auth-form">
+                    <h3>ログイン</h3>
+                    <form id="login-form">
+                        <input type="email" id="login-email" placeholder="メールアドレス" required>
+                        <input type="password" id="login-password" placeholder="パスワード" required>
+                        <button type="submit" class="auth-button">ログイン</button>
+                    </form>
+                </div>
+
+                <!-- 登録フォーム -->
+                <div class="auth-form">
+                    <h3>新規登録</h3>
+                    <form id="signup-form">
+                        <input type="email" id="signup-email" placeholder="メールアドレス" required>
+                        <input type="password" id="signup-password" placeholder="パスワード（6文字以上）" required>
+                        <button type="submit" class="auth-button">登録</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ユーザーセクション -->
+    <section id="user-section" class="user-section" style="display:none;">
+        <div class="container">
+            <h2 class="section-title">マイページ</h2>
+            
+            <!-- プロフィールカード -->
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-icon">
+                        <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                            <circle cx="32" cy="32" r="32" fill="#667eea"/>
+                            <text x="32" y="40" font-size="28" fill="white" text-anchor="middle" font-weight="600">U</text>
+                        </svg>
+                    </div>
+                    <div class="profile-info">
+                        <h3 id="user-name">ユーザー</h3>
+                        <p id="user-email"></p>
+                        <p class="join-date">アカウント作成日: <span id="join-date">-</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 統計情報 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📷</div>
+                    <div class="stat-value" id="photos-count">0</div>
+                    <div class="stat-label">連携済み写真</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎵</div>
+                    <div class="stat-value" id="soundscapes-count">0</div>
+                    <div class="stat-label">生成した音風景</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-value" id="last-login">今日</div>
+                    <div class="stat-label">最終ログイン</div>
+                </div>
+            </div>
+
+            <!-- Google Photos連携 -->
+            <div class="google-photos-section">
+                <h3>Google Photosと連携</h3>
+                <p class="google-photos-description">旅の写真から音風景を生成するために、Google Photosへのアクセスを許可してください。</p>
+                <button id="google-signin-btn" class="auth-button google-button">
+                    <span class="google-icon">📷</span>
+                    Google Photosと連携
+                </button>
+                <div id="photos-status" class="photos-status" style="display:none;">
+                    <p>✅ Google Photosに接続済み</p>
+                </div>
+            </div>
+
+            <!-- アクション -->
+            <div class="user-actions">
+                <button id="logout-btn" class="auth-button logout-button">ログアウト</button>
+            </div>
+            
+            <p class="user-description">音風景生成機能は開発中です</p>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <p>© 2025 Sorana. Built with ❤️ in Japan.</p>
+    </footer>
+
+    <!-- Firebase & App Scripts -->
+    <script type="module" src="src/app.js"></script>
+</body>
+</html>

@@ -70,18 +70,11 @@ if (logoutBtn) {
 
 // 認証状態の監視
 watchAuthState((user) => {
-  const mypageLink = document.getElementById('mypage-link');
-  const loginLink = document.getElementById('login-link');
-  
   if (user) {
     // ログイン中
     if (authSection) authSection.style.display = 'none';
     if (userSection) userSection.style.display = 'block';
     if (userEmail) userEmail.textContent = user.email;
-    
-    // ナビゲーション表示切り替え
-    if (mypageLink) mypageLink.style.display = 'inline-block';
-    if (loginLink) loginLink.style.display = 'none';
     
     // ユーザー名を取得（メールアドレスの@前の部分）
     const userName = document.getElementById('user-name');
@@ -102,13 +95,19 @@ watchAuthState((user) => {
       profileIcon.textContent = user.email.charAt(0).toUpperCase();
     }
     
+    // index.htmlにいる場合は自動的にmypage.htmlへリダイレクト
+    if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
+      // ログイン後、マイページ以外にいる場合はリダイレクトしない
+    }
+    
   } else {
     // ログアウト中
     if (authSection) authSection.style.display = 'block';
     if (userSection) userSection.style.display = 'none';
     
-    // ナビゲーション表示切り替え
-    if (mypageLink) mypageLink.style.display = 'none';
-    if (loginLink) loginLink.style.display = 'inline-block';
+    // mypage.htmlにいる場合は、ログインフォームを表示
+    if (window.location.pathname.includes('mypage.html')) {
+      if (authSection) authSection.style.display = 'block';
+    }
   }
 });
