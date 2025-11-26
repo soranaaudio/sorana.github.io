@@ -27,6 +27,10 @@
         <div class="nav-links">
             <a href="index.html" class="nav-link">ホーム</a>
             <a href="mypage.html" class="nav-link">マイページ</a>
+            <button id="google-signin-btn" class="nav-button google-nav-button" style="display:none;">
+                📷 連携
+            </button>
+            <button id="logout-btn" class="nav-button logout-nav-button">ログアウト</button>
         </div>
     </div>
 </nav>
@@ -105,24 +109,6 @@
                     <div class="stat-value" id="last-login">今日</div>
                     <div class="stat-label">最終ログイン</div>
                 </div>
-            </div>
-
-            <!-- Google Photos連携 -->
-            <div class="google-photos-section">
-                <h3>Google Photosと連携</h3>
-                <p class="google-photos-description">旅の写真から音風景を生成するために、Google Photosへのアクセスを許可してください。</p>
-                <button id="google-signin-btn" class="auth-button google-button">
-                    <span class="google-icon">📷</span>
-                    Google Photosと連携
-                </button>
-                <div id="photos-status" class="photos-status" style="display:none;">
-                    <p>✅ Google Photosに接続済み</p>
-                </div>
-            </div>
-
-            <!-- アクション -->
-            <div class="user-actions">
-                <button id="logout-btn" class="auth-button logout-button">ログアウト</button>
             </div>
             
             <p class="user-description">音風景生成機能は開発中です</p>
