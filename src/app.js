@@ -104,6 +104,8 @@ async function displayProfile(user) {
   if (profileIconText && profile) {
     profileIconText.textContent = profile.iconEmoji || profile.displayName.charAt(0).toUpperCase();
   }
+  // 投稿を読み込む
+  await loadUserPosts(user.uid);
 }
 
 // 認証状態の監視
@@ -280,4 +282,176 @@ if (saveProfileBtn) {
       alert('エラーが発生しました: ' + result.error);
     }
   });
+}
+
+// ==========================================
+// 投稿機能
+// ==========================================
+
+import { createPost, getUserPosts } from './posts.js';
+
+const addPostBtn = document.getElementById('add-post-btn');
+const createPostModal = document.getElementById('create-post-modal');
+const postModalCloseBtn = document.getElementById('post-modal-close-btn');
+const postCancelBtn = document.getElementById('post-cancel-btn');
+const postSaveBtn = document.getElementById('post-save-btn');
+const imageInput = document.getElementById('image-input');
+const imageUploadArea = document.getElementById('image-upload-area');
+const uploadPlaceholder = document.getElementById('upload-placeholder');
+const imagePreview = document.getElementById('image-preview');
+const locationInput = document.getElementById('location-input');
+const dateInput = document.getElementById('date-input');
+const postsGrid = document.getElementById('posts-grid');
+
+let selectedImageFile = null;
+
+// 投稿モーダルを開く
+if (addPostBtn) {
+  addPostBtn.addEventListener('click', () => {
+    // 今日の日付をデフォルトで設定
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.value = today;
+    
+    createPostModal.style.display = 'flex';
+  });
+}
+
+// 投稿モーダルを閉じる
+function closePostModal() {
+  if (createPostModal) {
+    createPostModal.style.display = 'none';
+    // フォームをリセット
+    selectedImageFile = null;
+    imagePreview.style.display = 'none';
+    uploadPlaceholder.style.display = 'block';
+    locationInput.value = '';
+    dateInput.value = '';
+    postSaveBtn.disabled = true;
+  }
+}
+
+if (postModalCloseBtn) postModalCloseBtn.addEventListener('click', closePostModal);
+if (postCancelBtn) postCancelBtn.addEventListener('click', closePostModal);
+
+// モーダル外クリックで閉じる
+if (createPostModal) {
+  createPostModal.addEventListener('click', (e) => {
+    if (e.target === createPostModal) closePostModal();
+  });
+}
+
+// 画像選択エリアのクリック
+if (imageUploadArea) {
+  imageUploadArea.addEventListener('click', () => {
+    imageInput.click();
+  });
+}
+
+// 画像選択時
+if (imageInput) {
+  imageInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      selectedImageFile = file;
+      
+      // プレビュー表示
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        imagePreview.src = e.target.result;
+        imagePreview.style.display = 'block';
+        uploadPlaceholder.style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+      
+      // 投稿ボタンの有効化チェック
+      checkFormValid();
+    }
+  });
+}
+
+// フォーム入力時
+if (locationInput) {
+  locationInput.addEventListener('input', checkFormValid);
+}
+if (dateInput) {
+  dateInput.addEventListener('input', checkFormValid);
+}
+
+// フォームの有効性チェック
+function checkFormValid() {
+  const isValid = selectedImageFile && 
+                  locationInput.value.trim() && 
+                  dateInput.value;
+  postSaveBtn.disabled = !isValid;
+}
+
+// 投稿保存
+if (postSaveBtn) {
+  postSaveBtn.addEventListener('click', async () => {
+    const user = auth.currentUser;
+    if (!user) return;
+    
+    const location = locationInput.value.trim();
+    const date = dateInput.value;
+    
+    if (!selectedImageFile || !location || !date) {
+      alert('全ての項目を入力してください');
+      return;
+    }
+    
+    // ローディング表示
+    postSaveBtn.disabled = true;
+    postSaveBtn.textContent = '投稿中...';
+    
+    try {
+      const result = await createPost(user.uid, selectedImageFile, location, date);
+      
+      if (result.success) {
+        alert('投稿しました！');
+        closePostModal();
+        
+        // 投稿一覧を再読み込み
+        await loadUserPosts(user.uid);
+      } else {
+        alert('エラーが発生しました: ' + result.error);
+      }
+    } catch (error) {
+      alert('エラーが発生しました: ' + error.message);
+    } finally {
+      postSaveBtn.disabled = false;
+      postSaveBtn.textContent = '投稿';
+    }
+  });
+}
+
+// 投稿一覧を読み込む
+async function loadUserPosts(userId) {
+  if (!postsGrid) return;
+  
+  const result = await getUserPosts(userId);
+  
+  if (result.success && result.posts.length > 0) {
+    postsGrid.innerHTML = '';
+    
+    result.posts.forEach(post => {
+      const postCard = document.createElement('div');
+      postCard.className = 'post-card';
+      postCard.innerHTML = `
+        <img src="${post.imageUrl}" alt="${post.location}" class="post-image">
+        <div class="post-info">
+          <div class="post-location">${post.location}</div>
+          <div class="post-date">${post.date}</div>
+        </div>
+      `;
+      postsGrid.appendChild(postCard);
+    });
+    
+    // 写真数を更新
+    const photosCount = document.getElementById('photos-count');
+    if (photosCount) {
+      photosCount.textContent = result.posts.length;
+    }
+  } else {
+    postsGrid.innerHTML = '<p class="no-posts">まだ投稿がありません</p>';
+  }
 }

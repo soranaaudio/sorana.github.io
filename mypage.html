@@ -165,6 +165,49 @@
     </div>
 </div>
 
+<!-- 投稿作成モーダル -->
+<div id="create-post-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>写真を追加</h3>
+            <button class="modal-close" id="post-modal-close-btn">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+            <!-- 画像プレビュー -->
+            <div class="image-upload-area" id="image-upload-area">
+                <input type="file" id="image-input" accept="image/*" style="display: none;">
+                <div class="upload-placeholder" id="upload-placeholder">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                    <p>クリックして写真を選択</p>
+                </div>
+                <img id="image-preview" style="display: none; max-width: 100%; border-radius: 12px;">
+            </div>
+            
+            <!-- 場所入力 -->
+            <div class="form-group">
+                <label for="location-input">場所</label>
+                <input type="text" id="location-input" placeholder="例：屋久島、沖縄の海" required>
+            </div>
+            
+            <!-- 日付入力 -->
+            <div class="form-group">
+                <label for="date-input">撮影日</label>
+                <input type="date" id="date-input" required>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button id="post-cancel-btn" class="btn btn-secondary">キャンセル</button>
+            <button id="post-save-btn" class="btn btn-primary" disabled>投稿</button>
+        </div>
+    </div>
+</div>
+
             <!-- 統計情報 -->
             <div class="stats-grid">
                 <div class="stat-card">
@@ -186,6 +229,18 @@
             
             <p class="user-description">音風景生成機能は開発中です</p>
         </div>
+        <!-- 投稿セクション -->
+<div class="posts-section">
+    <div class="posts-header">
+        <h3>旅の思い出</h3>
+        <button id="add-post-btn" class="add-post-btn">📷 写真を追加</button>
+    </div>
+    
+    <div id="posts-grid" class="posts-grid">
+        <!-- 投稿がここに表示される -->
+        <p class="no-posts">まだ投稿がありません</p>
+    </div>
+</div>
     </section>
 
     <!-- フッター -->
