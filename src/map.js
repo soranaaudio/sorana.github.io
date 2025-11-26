@@ -5,7 +5,7 @@ import { getUserPosts } from './posts.js';
 
 // 地図の初期化
 let map = null;
-let prefectureLayer = null;
+let geojsonLayer = null;
 
 // 都道府県の座標（中心点）
 const prefectureCoordinates = {
@@ -58,23 +58,93 @@ const prefectureCoordinates = {
   '沖縄県': [26.212, 127.681]
 };
 
+// 訪問済み都道府県のセット（グローバル変数）
+let visitedPrefectures = new Set();
+let prefecturePhotoCounts = {};
+
 // 地図の初期化
 function initMap() {
   // 地図を作成（日本中心）
   map = L.map('map').setView([37.5, 137.5], 5);
   
-  // タイルレイヤーを追加
+  // タイルレイヤーを追加（薄い色）
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     maxZoom: 18,
+    opacity: 0.5
   }).addTo(map);
+  
+  // GeoJSONを読み込んで都道府県ポリゴンを追加
+  loadPrefecturePolygons();
+}
+
+// 都道府県ポリゴンを読み込む
+async function loadPrefecturePolygons() {
+  try {
+    // GeoJSONを取得
+    const response = await fetch('https://raw.githubusercontent.com/smartnews-smri/japan-topography/main/data/prefecture.json');
+    const geojsonData = await response.json();
+    
+    // GeoJSONレイヤーを作成
+    geojsonLayer = L.geoJSON(geojsonData, {
+      style: (feature) => getStyle(feature),
+      onEachFeature: onEachFeature
+    }).addTo(map);
+    
+  } catch (error) {
+    console.error('GeoJSON読み込みエラー:', error);
+  }
+}
+
+// 都道府県ごとのスタイルを設定
+function getStyle(feature) {
+  const prefName = feature.properties.nam_ja; // 都道府県名
+  const isVisited = visitedPrefectures.has(prefName);
+  
+  return {
+    fillColor: isVisited ? '#667eea' : '#e2e8f0',
+    weight: 1,
+    opacity: 1,
+    color: '#94a3b8',
+    fillOpacity: isVisited ? 0.7 : 0.3
+  };
+}
+
+// 各都道府県にイベントを設定
+function onEachFeature(feature, layer) {
+  const prefName = feature.properties.nam_ja;
+  
+  // マウスオーバー時
+  layer.on('mouseover', function() {
+    this.setStyle({
+      weight: 2,
+      color: '#475569',
+      fillOpacity: 0.9
+    });
+  });
+  
+  // マウスアウト時
+  layer.on('mouseout', function() {
+    geojsonLayer.resetStyle(this);
+  });
+  
+  // クリック時
+  layer.on('click', function() {
+    const photoCount = prefecturePhotoCounts[prefName] || 0;
+    const status = visitedPrefectures.has(prefName) ? '訪問済み' : '未訪問';
+    layer.bindPopup(`
+      <b>${prefName}</b><br>
+      ${status}<br>
+      ${photoCount > 0 ? `${photoCount}枚の写真` : ''}
+    `).openPopup();
+  });
 }
 
 // 訪問済み都道府県を表示
 function displayVisitedPrefectures(posts) {
   // 訪問済み都道府県を集計
-  const visitedPrefectures = new Set();
-  const prefecturePhotoCounts = {};
+  visitedPrefectures.clear();
+  prefecturePhotoCounts = {};
   
   posts.forEach(post => {
     if (post.prefecture && post.prefecture !== '海外') {
@@ -83,23 +153,10 @@ function displayVisitedPrefectures(posts) {
     }
   });
   
-  // マーカーを追加
-  visitedPrefectures.forEach(prefecture => {
-    const coords = prefectureCoordinates[prefecture];
-    if (coords) {
-      const photoCount = prefecturePhotoCounts[prefecture];
-      const marker = L.circleMarker(coords, {
-        radius: 10 + (photoCount * 2),
-        fillColor: '#667eea',
-        color: '#fff',
-        weight: 2,
-        opacity: 1,
-        fillOpacity: 0.8
-      }).addTo(map);
-      
-      marker.bindPopup(`<b>${prefecture}</b><br>${photoCount}枚の写真`);
-    }
-  });
+  // ポリゴンのスタイルを更新
+  if (geojsonLayer) {
+    geojsonLayer.setStyle((feature) => getStyle(feature));
+  }
   
   // 統計を更新
   document.getElementById('visited-count').textContent = visitedPrefectures.size;
