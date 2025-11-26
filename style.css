@@ -147,6 +147,11 @@ body {
         text-align: left;
         padding: 1rem 2rem;
         border-radius: 0;
+        background: transparent;
+    }
+    
+     .logout-nav-button {
+        border: none; /* 追加 */
     }
 }
 
