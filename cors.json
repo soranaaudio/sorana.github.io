@@ -1,0 +1,7 @@
+[
+  {
+    "origin": ["https://soranaaudio.github.io"],
+    "method": ["GET", "POST", "PUT", "DELETE"],
+    "maxAgeSeconds": 3600
+  }
+]
