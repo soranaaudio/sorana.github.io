@@ -47,30 +47,9 @@ export const startGoogleAuth = () => {
 // 認証成功時の処理
 async function onAuthSuccess() {
   console.log('認証成功、写真を取得します');
-  
-  // トークンの詳細情報をデコード
-  try {
-    const tokenInfo = parseJwt(accessToken);
-    console.log('=== トークン情報の詳細 ===');
-    console.log('トークン情報:', tokenInfo);
-    console.log('スコープ:', tokenInfo.scope);
-    console.log('======================');
-  } catch (e) {
-    console.error('トークン解析エラー:', e);
-  }
-  
   await getPhotos();
 }
 
-// JWTトークンをパースする関数
-function parseJwt(token) {
-  const base64Url = token.split('.')[1];
-  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-  }).join(''));
-  return JSON.parse(jsonPayload);
-}
 
 // Google Photosから写真を取得
 async function getPhotos() {
