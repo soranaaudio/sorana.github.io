@@ -1,6 +1,6 @@
 // src/app.js
 import { signUp, signIn, logOut, watchAuthState } from './auth.js';
-import { initGoogleAuth, signInWithGoogle, getPhotos } from './googlePhotos.js';
+import { initGoogleAuth, startGoogleAuth } from './googlePhotos.js';
 
 // DOM要素の取得
 const loginForm = document.getElementById('login-form');
@@ -20,7 +20,7 @@ window.addEventListener('load', () => {
 // Google Photosサインインボタン
 if (googleSigninBtn) {
   googleSigninBtn.addEventListener('click', async () => {
-    signInWithGoogle();
+    startGoogleAuth();
   });
 }
 
