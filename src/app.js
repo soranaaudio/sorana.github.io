@@ -11,6 +11,7 @@ const userSection = document.getElementById('user-section');
 const userEmail = document.getElementById('user-email');
 const googleSigninBtn = document.getElementById('google-signin-btn');
 const photosStatus = document.getElementById('photos-status');
+const logoutNavBtn = document.querySelector('.logout-nav-button');
 
 // Google認証の初期化
 window.addEventListener('load', () => {
@@ -75,6 +76,7 @@ watchAuthState((user) => {
     if (authSection) authSection.style.display = 'none';
     if (userSection) userSection.style.display = 'block';
     if (userEmail) userEmail.textContent = user.email;
+    if (logoutNavBtn) logoutNavBtn.style.display = 'inline-block';
     
     // ユーザー名を取得（メールアドレスの@前の部分）
     const userName = document.getElementById('user-name');
@@ -104,10 +106,21 @@ watchAuthState((user) => {
     // ログアウト中
     if (authSection) authSection.style.display = 'block';
     if (userSection) userSection.style.display = 'none';
-    
+    if (logoutNavBtn) logoutNavBtn.style.display = 'none';
     // mypage.htmlにいる場合は、ログインフォームを表示
     if (window.location.pathname.includes('mypage.html')) {
       if (authSection) authSection.style.display = 'block';
     }
   }
 });
+
+// ログアウトボタン（既存の部分に追加）
+if (logoutNavBtn) {
+  logoutNavBtn.addEventListener('click', async () => {
+    const result = await logOut();
+    if (result.success) {
+      alert('ログアウトしました');
+      window.location.href = 'index.html';
+    }
+  });
+}

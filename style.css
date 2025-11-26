@@ -926,7 +926,7 @@ body {
    ======================================== */
 
 .profile-card {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.65);
     backdrop-filter: blur(10px);
     border-radius: 20px;
     padding: 40px;
@@ -969,7 +969,7 @@ body {
 }
 
 .stat-card {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.65);
     backdrop-filter: blur(10px);
     border-radius: 16px;
     padding: 30px;
