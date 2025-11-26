@@ -173,13 +173,17 @@ body {
 }
 
 .logout-nav-button {
-    background: #f56565;
-    color: white;
+    background: transparent;
+    color: #4a5568;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
 }
 
 .logout-nav-button:hover {
-    background: #e53e3e;
-    transform: translateY(-2px);
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    transform: translateY(0);
 }
 
 @media (max-width: 768px) {
