@@ -86,7 +86,6 @@ async function getPhotos() {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json'
       }
     });
 
