@@ -1,6 +1,7 @@
 // src/firebase.js
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import { getAuth } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCC4kC-Qqw078qlWRVcQZ5fLSf2y2PD-J8",
@@ -17,4 +18,8 @@ const app = initializeApp(firebaseConfig);
 
 // Authenticationを初期化
 export const auth = getAuth(app);
+
+// Firestoreを初期化
+export const db = getFirestore(app);
+
 export default app;

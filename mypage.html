@@ -80,21 +80,90 @@
         <div class="container">
             
             <!-- プロフィールカード -->
-            <div class="profile-card">
-                <div class="profile-header">
-                    <div class="profile-icon">
-                        <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-                            <circle cx="32" cy="32" r="32" fill="#667eea"/>
-                            <text x="32" y="40" font-size="28" fill="white" text-anchor="middle" font-weight="600">U</text>
-                        </svg>
-                    </div>
-                    <div class="profile-info">
-                        <h3 id="user-name">ユーザー</h3>
-                        <p id="user-email"></p>
-                        <p class="join-date">アカウント作成日: <span id="join-date">-</span></p>
-                    </div>
+<div class="profile-card">
+    <div class="profile-header">
+        <div class="profile-icon">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                <circle cx="32" cy="32" r="32" fill="#667eea"/>
+                <text x="32" y="40" font-size="28" fill="white" text-anchor="middle" font-weight="600">U</text>
+            </svg>
+        </div>
+        <div class="profile-info">
+            <h3 id="user-name">ユーザー</h3>
+            <p id="user-email"></p>
+            <p class="join-date">アカウント作成日: <span id="join-date">-</span></p>
+        </div>
+    </div>
+    <button id="edit-profile-btn" class="edit-profile-btn">
+        ✏️ プロフィールを編集
+    </button>
+</div>
+
+<!-- プロフィール編集モーダル -->
+<div id="edit-profile-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>プロフィール編集</h3>
+            <button class="modal-close" id="modal-close-btn">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+            <!-- アイコン選択 -->
+            <div class="form-group">
+                <label>アイコン</label>
+                <div class="icon-preview">
+                    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                        <circle cx="40" cy="40" r="40" fill="#667eea" id="preview-circle"/>
+                        <text x="40" y="52" font-size="36" fill="white" text-anchor="middle" font-weight="600" id="preview-text">🌍</text>
+                    </svg>
+                </div>
+                
+                <!-- 絵文字選択 -->
+                <div class="emoji-grid">
+                    <button class="emoji-btn" data-emoji="🌍">🌍</button>
+                    <button class="emoji-btn" data-emoji="🏔️">🏔️</button>
+                    <button class="emoji-btn" data-emoji="🌊">🌊</button>
+                    <button class="emoji-btn" data-emoji="⛰️">⛰️</button>
+                    <button class="emoji-btn" data-emoji="🏝️">🏝️</button>
+                    <button class="emoji-btn" data-emoji="🗻">🗻</button>
+                    <button class="emoji-btn" data-emoji="🏞️">🏞️</button>
+                    <button class="emoji-btn" data-emoji="🌅">🌅</button>
+                    <button class="emoji-btn" data-emoji="🌄">🌄</button>
+                    <button class="emoji-btn" data-emoji="🏖️">🏖️</button>
+                    <button class="emoji-btn" data-emoji="🌴">🌴</button>
+                    <button class="emoji-btn" data-emoji="✈️">✈️</button>
+                </div>
+                
+                <!-- 色選択 -->
+                <div class="color-grid">
+                    <button class="color-btn" data-color="#667eea" style="background: #667eea;"></button>
+                    <button class="color-btn" data-color="#764ba2" style="background: #764ba2;"></button>
+                    <button class="color-btn" data-color="#f093fb" style="background: #f093fb;"></button>
+                    <button class="color-btn" data-color="#4facfe" style="background: #4facfe;"></button>
+                    <button class="color-btn" data-color="#43e97b" style="background: #43e97b;"></button>
+                    <button class="color-btn" data-color="#fa709a" style="background: #fa709a;"></button>
+                    <button class="color-btn" data-color="#feca57" style="background: #feca57;"></button>
+                    <button class="color-btn" data-color="#ff6348" style="background: #ff6348;"></button>
+                    <button class="color-btn" data-color="#48dbfb" style="background: #48dbfb;"></button>
+                    <button class="color-btn" data-color="#1dd1a1" style="background: #1dd1a1;"></button>
+                    <button class="color-btn" data-color="#5f27cd" style="background: #5f27cd;"></button>
+                    <button class="color-btn" data-color="#00d2d3" style="background: #00d2d3;"></button>
                 </div>
             </div>
+            
+            <!-- ユーザー名入力 -->
+            <div class="form-group">
+                <label for="display-name-input">ユーザー名</label>
+                <input type="text" id="display-name-input" placeholder="ユーザー名を入力" maxlength="20">
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button id="cancel-btn" class="btn btn-secondary">キャンセル</button>
+            <button id="save-profile-btn" class="btn btn-primary">保存</button>
+        </div>
+    </div>
+</div>
 
             <!-- 統計情報 -->
             <div class="stats-grid">

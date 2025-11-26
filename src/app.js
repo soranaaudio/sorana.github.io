@@ -1,6 +1,8 @@
 // src/app.js
+import { auth } from './firebase.js'; // この行を追加
 import { signUp, signIn, logOut, watchAuthState } from './auth.js';
 import { initGoogleAuth, startGoogleAuth } from './googlePhotos.js';
+import { getProfile, createDefaultProfile, saveProfile } from './profile.js'; // saveProfileを追加
 
 // DOM要素の取得
 const loginForm = document.getElementById('login-form');
@@ -69,8 +71,43 @@ if (logoutBtn) {
   });
 }
 
+// プロフィール情報を表示する関数（新規追加）
+async function displayProfile(user) {
+  // プロフィール取得
+  const profileResult = await getProfile(user.uid);
+  
+  let profile;
+  if (profileResult.success && profileResult.data) {
+    // 既存プロフィールがある
+    profile = profileResult.data;
+  } else {
+    // 初回ログイン：デフォルトプロフィール作成
+    await createDefaultProfile(user.uid, user.email);
+    const newProfileResult = await getProfile(user.uid);
+    profile = newProfileResult.data;
+  }
+  
+  // ユーザー名を表示
+  const userName = document.getElementById('user-name');
+  if (userName && profile) {
+    userName.textContent = profile.displayName || user.email.split('@')[0];
+  }
+  
+  // アイコンを表示
+  const profileIcon = document.querySelector('.profile-icon svg circle');
+  const profileIconText = document.querySelector('.profile-icon svg text');
+  
+  if (profileIcon && profile) {
+    profileIcon.setAttribute('fill', profile.iconColor || '#667eea');
+  }
+  
+  if (profileIconText && profile) {
+    profileIconText.textContent = profile.iconEmoji || profile.displayName.charAt(0).toUpperCase();
+  }
+}
+
 // 認証状態の監視
-watchAuthState((user) => {
+watchAuthState(async (user) => {  // ← ここにasyncを追加
   if (user) {
     // ログイン中
     if (authSection) authSection.style.display = 'none';
@@ -78,23 +115,15 @@ watchAuthState((user) => {
     if (userEmail) userEmail.textContent = user.email;
     if (logoutNavBtn) logoutNavBtn.style.display = 'inline-block';
     
-    // ユーザー名を取得（メールアドレスの@前の部分）
-    const userName = document.getElementById('user-name');
-    if (userName) {
-      userName.textContent = user.email.split('@')[0];
-    }
     
+// プロフィール情報を表示（新規追加）
+    await displayProfile(user);
+
     // アカウント作成日を表示
     const joinDate = document.getElementById('join-date');
     if (joinDate && user.metadata && user.metadata.creationTime) {
       const date = new Date(user.metadata.creationTime);
       joinDate.textContent = date.toLocaleDateString('ja-JP');
-    }
-    
-    // プロフィールアイコンの頭文字
-    const profileIcon = document.querySelector('.profile-icon text');
-    if (profileIcon) {
-      profileIcon.textContent = user.email.charAt(0).toUpperCase();
     }
     
     // index.htmlにいる場合は自動的にmypage.htmlへリダイレクト
@@ -121,6 +150,134 @@ if (logoutNavBtn) {
     if (result.success) {
       alert('ログアウトしました');
       window.location.href = 'index.html';
+    }
+  });
+}
+
+// ==========================================
+// プロフィール編集機能
+// ==========================================
+
+const editProfileBtn = document.getElementById('edit-profile-btn');
+const editModal = document.getElementById('edit-profile-modal');
+const modalCloseBtn = document.getElementById('modal-close-btn');
+const cancelBtn = document.getElementById('cancel-btn');
+const saveProfileBtn = document.getElementById('save-profile-btn');
+const displayNameInput = document.getElementById('display-name-input');
+
+// 選択中のアイコン設定
+let selectedEmoji = '🌍';
+let selectedColor = '#667eea';
+
+// モーダルを開く
+if (editProfileBtn) {
+  editProfileBtn.addEventListener('click', async () => {
+    const user = auth.currentUser;
+    if (!user) return;
+    
+    // 現在のプロフィールを取得
+    const profileResult = await getProfile(user.uid);
+    if (profileResult.success && profileResult.data) {
+      const profile = profileResult.data;
+      selectedEmoji = profile.iconEmoji || '🌍';
+      selectedColor = profile.iconColor || '#667eea';
+      displayNameInput.value = profile.displayName || '';
+      
+      // プレビュー更新
+      updatePreview();
+      
+      // 選択状態を反映
+      document.querySelectorAll('.emoji-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.emoji === selectedEmoji);
+      });
+      document.querySelectorAll('.color-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.color === selectedColor);
+      });
+    }
+    
+    editModal.style.display = 'flex';
+  });
+}
+
+// モーダルを閉じる
+function closeModal() {
+  if (editModal) editModal.style.display = 'none';
+}
+
+if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
+if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+
+// モーダル外クリックで閉じる
+if (editModal) {
+  editModal.addEventListener('click', (e) => {
+    if (e.target === editModal) closeModal();
+  });
+}
+
+// プレビュー更新
+function updatePreview() {
+  const previewCircle = document.getElementById('preview-circle');
+  const previewText = document.getElementById('preview-text');
+  
+  if (previewCircle) previewCircle.setAttribute('fill', selectedColor);
+  if (previewText) previewText.textContent = selectedEmoji;
+}
+
+// 絵文字選択
+document.querySelectorAll('.emoji-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    selectedEmoji = btn.dataset.emoji;
+    
+    // 選択状態更新
+    document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    
+    updatePreview();
+  });
+});
+
+// 色選択
+document.querySelectorAll('.color-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    selectedColor = btn.dataset.color;
+    
+    // 選択状態更新
+    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    
+    updatePreview();
+  });
+});
+
+// プロフィール保存
+if (saveProfileBtn) {
+  saveProfileBtn.addEventListener('click', async () => {
+    const user = auth.currentUser;
+    if (!user) return;
+    
+    const displayName = displayNameInput.value.trim();
+    
+    if (!displayName) {
+      alert('ユーザー名を入力してください');
+      return;
+    }
+    
+    // プロフィール保存
+    const result = await saveProfile(user.uid, {
+      displayName: displayName,
+      iconEmoji: selectedEmoji,
+      iconColor: selectedColor,
+      updatedAt: new Date().toISOString()
+    });
+    
+    if (result.success) {
+      alert('プロフィールを更新しました！');
+      closeModal();
+      
+      // 画面を再読み込みして反映
+      await displayProfile(user);
+    } else {
+      alert('エラーが発生しました: ' + result.error);
     }
   });
 }
