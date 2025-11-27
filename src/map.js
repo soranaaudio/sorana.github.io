@@ -149,7 +149,7 @@ async function loadPrefecturePolygons() {
 
 // 都道府県ごとのスタイルを設定
 function getStyle(feature) {
-  const prefNameEn = feature.properties.nam_en || feature.properties.name; // 英語名
+  const prefNameEn = feature.properties.nam; // 英語名
   const prefName = prefectureNameMap[prefNameEn]; // 日本語に変換
   const isVisited = visitedPrefectures.has(prefName);
   
@@ -164,7 +164,7 @@ function getStyle(feature) {
 
 // 各都道府県にイベントを設定
 function onEachFeature(feature, layer) {
-  const prefNameEn = feature.properties.nam_en || feature.properties.name; // 英語名
+  const prefNameEn = feature.properties.nam; // 英語名
   const prefName = prefectureNameMap[prefNameEn]; // 日本語に変換
   
   // マウスオーバー時
