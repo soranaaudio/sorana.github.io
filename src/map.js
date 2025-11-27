@@ -81,8 +81,8 @@ function initMap() {
 // 都道府県ポリゴンを読み込む
 async function loadPrefecturePolygons() {
   try {
-    // GeoJSONを取得（別のソースを使用）
-    const response = await fetch('https://geoshape.ex.nii.ac.jp/ka/resource/prefectures.geojson');
+    // ローカルのGeoJSONを取得
+    const response = await fetch('./assets/data/japan.geojson');
     const geojsonData = await response.json();
     
     // GeoJSONレイヤーを作成
