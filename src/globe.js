@@ -7,6 +7,9 @@ import { getUserPosts } from './posts.js';
 let scene, camera, renderer, globe, controls;
 let visitedPrefectures = new Set();
 let prefecturePhotoCounts = {};
+let markers = []; // マーカーの配列
+let raycaster = new THREE.Raycaster(); // クリック判定用
+let mouse = new THREE.Vector2(); // マウス座標
 
 // 都道府県の3D座標（緯度経度から計算）
 const prefectureCoordinates = {
@@ -117,12 +120,16 @@ scene.add(globe);
 
 // OrbitControlsの追加（マウス/タッチ操作）
   controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true; // 滑らかな動き
+  controls.enableDamping = true;
   controls.dampingFactor = 0.05;
-  controls.minDistance = 150; // 最小ズーム距離
-  controls.maxDistance = 500; // 最大ズーム距離
-  controls.enablePan = false; // パン（平行移動）を無効化
-  controls.autoRotate = false; // 自動回転をオフ（手動操作優先）
+  controls.minDistance = 150;
+  controls.maxDistance = 500;
+  controls.enablePan = false;
+  controls.autoRotate = false;
+
+  // マウスクリックイベント
+  renderer.domElement.addEventListener('click', onMarkerClick);
+  renderer.domElement.addEventListener('touchstart', onMarkerClick);
 
   // ウィンドウリサイズ対応
   window.addEventListener('resize', onWindowResize);
@@ -156,18 +163,34 @@ function onWindowResize() {
 
 // 訪問済み都道府県にマーカーを追加
 function addVisitedMarkers() {
+  // 既存のマーカーを削除
+  markers.forEach(marker => scene.remove(marker));
+  markers = [];
+  
   visitedPrefectures.forEach(prefName => {
     const coord = prefectureCoordinates[prefName];
     if (coord) {
-      const position = latLonToVector3(coord.lat, coord.lon, 101);
+      const position = latLonToVector3(coord.lat, coord.lon, 102);
       
-      // 緑色のマーカー
-      const markerGeometry = new THREE.SphereGeometry(2, 16, 16);
-      const markerMaterial = new THREE.MeshBasicMaterial({ color: 0x10b981 });
+      // 緑色のマーカー（大きく目立つように）
+      const markerGeometry = new THREE.SphereGeometry(3, 16, 16);
+      const markerMaterial = new THREE.MeshBasicMaterial({ 
+        color: 0x10b981,
+        transparent: true,
+        opacity: 0.9
+      });
       const marker = new THREE.Mesh(markerGeometry, markerMaterial);
       marker.position.copy(position);
       
+      // マーカーにデータを保存
+      marker.userData = {
+        prefecture: prefName,
+        photoCount: prefecturePhotoCounts[prefName] || 0,
+        coordinate: coord
+      };
+      
       scene.add(marker);
+      markers.push(marker);
     }
   });
 }
@@ -281,6 +304,105 @@ function drawPolygon(ctx, coordinates, width, height) {
     ctx.fill();
     ctx.stroke();
   });
+}
+
+// マーカークリック処理
+function onMarkerClick(event) {
+  event.preventDefault();
+  
+  // マウス座標を正規化（-1 〜 +1）
+  const rect = renderer.domElement.getBoundingClientRect();
+  mouse.x = ((event.clientX || event.touches[0].clientX) - rect.left) / rect.width * 2 - 1;
+  mouse.y = -((event.clientY || event.touches[0].clientY) - rect.top) / rect.height * 2 + 1;
+  
+  // レイキャストでマーカーとの交差判定
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(markers);
+  
+  if (intersects.length > 0) {
+    const clickedMarker = intersects[0].object;
+    const data = clickedMarker.userData;
+    
+    // ポップアップを表示
+    showPopup(data);
+    
+    // その地域にズーム
+    zoomToLocation(data.coordinate);
+  }
+}
+
+// ポップアップ表示
+function showPopup(data) {
+  // 既存のポップアップを削除
+  const existingPopup = document.getElementById('marker-popup');
+  if (existingPopup) existingPopup.remove();
+  
+  // 新しいポップアップを作成
+  const popup = document.createElement('div');
+  popup.id = 'marker-popup';
+  popup.innerHTML = `
+    <div style="
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.95);
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      min-width: 200px;
+      text-align: center;
+    ">
+      <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 20px;">${data.prefecture}</h3>
+      <p style="margin: 0; color: #64748b; font-size: 16px;">${data.photoCount}枚の写真</p>
+      <button onclick="document.getElementById('marker-popup').remove()" style="
+        margin-top: 15px;
+        padding: 8px 20px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+      ">閉じる</button>
+    </div>
+  `;
+  document.body.appendChild(popup);
+  
+  // 3秒後に自動で閉じる
+  setTimeout(() => {
+    if (document.getElementById('marker-popup')) {
+      popup.remove();
+    }
+  }, 3000);
+}
+
+// 指定座標にズーム
+function zoomToLocation(coord) {
+  const targetPosition = latLonToVector3(coord.lat, coord.lon, 200);
+  
+  // カメラを滑らかに移動
+  const startPosition = camera.position.clone();
+  const duration = 1500; // 1.5秒
+  const startTime = Date.now();
+  
+  function animateZoom() {
+    const elapsed = Date.now() - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    
+    // イージング（滑らかな動き）
+    const eased = 1 - Math.pow(1 - progress, 3);
+    
+    camera.position.lerpVectors(startPosition, targetPosition, eased);
+    camera.lookAt(0, 0, 0);
+    
+    if (progress < 1) {
+      requestAnimationFrame(animateZoom);
+    }
+  }
+  
+  animateZoom();
 }
 
 // ページ読み込み時に初期化
