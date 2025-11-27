@@ -182,15 +182,25 @@ function onEachFeature(feature, layer) {
   });
   
   // クリック時
-  layer.on('click', function() {
-    const photoCount = prefecturePhotoCounts[prefName] || 0;
-    const status = visitedPrefectures.has(prefName) ? '訪問済み' : '未訪問';
-    layer.bindPopup(`
-      <b>${prefName || prefNameEn}</b><br>
-      ${status}<br>
-      ${photoCount > 0 ? `${photoCount}枚の写真` : ''}
-    `).openPopup();
-  });
+layer.on('click', function(e) {
+  const photoCount = prefecturePhotoCounts[prefName] || 0;
+  const status = visitedPrefectures.has(prefName) ? '訪問済み' : '未訪問';
+  
+  // ポップアップを表示
+  layer.bindPopup(`
+    <b>${prefName || prefNameEn}</b><br>
+    ${status}<br>
+    ${photoCount > 0 ? `${photoCount}枚の写真` : ''}
+  `).openPopup();
+  
+  // 都道府県の中心座標を取得してズーム
+  const coordinates = prefectureCoordinates[prefName];
+  if (coordinates) {
+    map.flyTo(coordinates, 8, {
+      duration: 1.5 // 1.5秒かけてズーム
+    });
+  }
+});
 }
 
 // 訪問済み都道府県を表示
