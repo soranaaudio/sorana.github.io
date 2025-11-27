@@ -377,17 +377,40 @@ if (locationInput) {
 if (dateInput) {
   dateInput.addEventListener('input', checkFormValid);
 }
-// 都道府県選択時（ここに追加）
+// 都道府県選択時（国名入力欄の表示/非表示も制御）
 if (prefectureSelect) {
-  prefectureSelect.addEventListener('change', checkFormValid);
+  prefectureSelect.addEventListener('change', () => {
+    const countryInputGroup = document.getElementById('country-input-group');
+    const countryInput = document.getElementById('country-input');
+    
+    if (prefectureSelect.value === '海外') {
+      // 海外選択時：国名入力欄を表示
+      countryInputGroup.style.display = 'block';
+      countryInput.required = true;
+    } else {
+      // 国内選択時：国名入力欄を非表示
+      countryInputGroup.style.display = 'none';
+      countryInput.required = false;
+      countryInput.value = '';
+    }
+    
+    checkFormValid();
+  });
 }
 
 // フォームの有効性チェック
 function checkFormValid() {
-  const isValid = selectedImageFile && 
-                  prefectureSelect.value &&
-                  locationInput.value.trim() && 
-                  dateInput.value;
+  const countryInput = document.getElementById('country-input');
+  let isValid = selectedImageFile && 
+                prefectureSelect.value &&
+                locationInput.value.trim() && 
+                dateInput.value;
+  
+  // 海外選択時は国名も必須
+  if (prefectureSelect.value === '海外') {
+    isValid = isValid && countryInput.value.trim();
+  }
+  
   postSaveBtn.disabled = !isValid;
 }
 
@@ -399,6 +422,7 @@ if (postSaveBtn) {
     if (!user) return;
     
     const prefecture = document.getElementById('prefecture-select').value;
+    const country = document.getElementById('country-input').value.trim();
     const location = locationInput.value.trim();
     const date = dateInput.value;
     
@@ -407,12 +431,18 @@ if (postSaveBtn) {
       return;
     }
     
+    // 海外選択時は国名も必須
+    if (prefecture === '海外' && !country) {
+      alert('国名を入力してください');
+      return;
+    }
+    
     // ローディング表示
     postSaveBtn.disabled = true;
     postSaveBtn.textContent = '投稿中...';
     
     try {
-      const result = await createPost(user.uid, selectedImageFile, prefecture, location, date);
+      const result = await createPost(user.uid, selectedImageFile, prefecture, location, date, country || null);
       
       if (result.success) {
         alert('投稿しました！');
