@@ -197,7 +197,7 @@ layer.on('click', function(e) {
   const coordinates = prefectureCoordinates[prefName];
   if (coordinates) {
     map.flyTo(coordinates, 8, {
-      duration: 1.5 // 1.5秒かけてズーム
+      duration: 1.0 // 1.0秒かけてズーム
     });
   }
 });
