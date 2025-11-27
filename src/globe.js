@@ -95,18 +95,17 @@ camera.lookAt(0, 0, 0);
   renderer.setPixelRatio(window.devicePixelRatio);
   container.appendChild(renderer.domElement);
 
-  // 地球の作成（白色ベース）
-  const geometry = new THREE.SphereGeometry(100, 64, 64);
-  // テクスチャローダーで地球画像を読み込み
-const textureLoader = new THREE.TextureLoader();
-const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
+  // 地球の作成（カスタムテクスチャ）
+const geometry = new THREE.SphereGeometry(100, 64, 64);
 
+// 一旦青い球体として作成（後でテクスチャを適用）
 const material = new THREE.MeshPhongMaterial({
-  map: earthTexture,
+  color: 0x3b82f6,  // 鮮やかな青（海の色）
   shininess: 5
 });
-  globe = new THREE.Mesh(geometry, material);
-  scene.add(globe);
+globe = new THREE.Mesh(geometry, material);
+scene.add(globe);
+
 
   // ライトの追加
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -192,6 +191,85 @@ watchAuthState(async (user) => {
     window.location.href = 'mypage.html';
   }
 });
+
+// カスタムテクスチャを作成（白い陸地 + 青い海 + 黒い境界線）
+async function createCustomTexture() {
+  try {
+    // 世界地図のGeoJSONを取得
+    const response = await fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson');
+    const worldData = await response.json();
+    
+    // 日本のGeoJSONも取得
+    const japanResponse = await fetch('./assets/data/japan.geojson');
+    const japanData = await japanResponse.json();
+    
+    // Canvasでテクスチャを作成
+    const canvas = document.createElement('canvas');
+    canvas.width = 2048;
+    canvas.height = 1024;
+    const ctx = canvas.getContext('2d');
+    
+    // 背景を青色（海）で塗りつぶし
+    ctx.fillStyle = '#3b82f6';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // 陸地を白で描画
+    ctx.fillStyle = '#ffffff';
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 1;
+    
+    // 世界の国々を描画
+    worldData.features.forEach(feature => {
+      drawGeoJSON(ctx, feature, canvas.width, canvas.height);
+    });
+    
+    // 日本の都道府県境界を描画
+    japanData.features.forEach(feature => {
+      drawGeoJSON(ctx, feature, canvas.width, canvas.height, true);
+    });
+    
+    // CanvasをテクスチャとしてThree.jsに適用
+    const texture = new THREE.CanvasTexture(canvas);
+    globe.material.map = texture;
+    globe.material.needsUpdate = true;
+    
+  } catch (error) {
+    console.error('テクスチャ作成エラー:', error);
+  }
+}
+
+// GeoJSONをCanvasに描画する関数
+function drawGeoJSON(ctx, feature, width, height, isJapan = false) {
+  const geometry = feature.geometry;
+  
+  if (geometry.type === 'Polygon') {
+    drawPolygon(ctx, geometry.coordinates, width, height);
+  } else if (geometry.type === 'MultiPolygon') {
+    geometry.coordinates.forEach(polygon => {
+      drawPolygon(ctx, polygon, width, height);
+    });
+  }
+}
+
+// ポリゴンを描画
+function drawPolygon(ctx, coordinates, width, height) {
+  coordinates.forEach(ring => {
+    ctx.beginPath();
+    ring.forEach((coord, i) => {
+      const x = ((coord[0] + 180) / 360) * width;
+      const y = ((90 - coord[1]) / 180) * height;
+      
+      if (i === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+    });
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  });
+}
 
 // ページ読み込み時に初期化
 window.addEventListener('load', () => {
