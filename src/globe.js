@@ -7,9 +7,11 @@ import { getUserPosts } from './posts.js';
 let scene, camera, renderer, globe, controls;
 let visitedPrefectures = new Set();
 let prefecturePhotoCounts = {};
-let markers = []; // マーカーの配列
-let raycaster = new THREE.Raycaster(); // クリック判定用
-let mouse = new THREE.Vector2(); // マウス座標
+let visitedCountries = new Set(); // 海外の国
+let countryPhotoCounts = {}; // 海外の国ごとの写真数
+let markers = [];
+let raycaster = new THREE.Raycaster();
+let mouse = new THREE.Vector2();
 
 // 都道府県の3D座標（緯度経度から計算）
 const prefectureCoordinates = {
@@ -60,6 +62,45 @@ const prefectureCoordinates = {
   '宮崎県': { lat: 31.911, lon: 131.424 },
   '鹿児島県': { lat: 31.560, lon: 130.558 },
   '沖縄県': { lat: 26.212, lon: 127.681 }
+};
+
+// 主要国の座標（首都の位置）
+const countryCoordinates = {
+  'アメリカ': { lat: 38.9072, lon: -77.0369 },
+  'カナダ': { lat: 45.4215, lon: -75.6972 },
+  'メキシコ': { lat: 19.4326, lon: -99.1332 },
+  'イギリス': { lat: 51.5074, lon: -0.1278 },
+  'フランス': { lat: 48.8566, lon: 2.3522 },
+  'ドイツ': { lat: 52.5200, lon: 13.4050 },
+  'イタリア': { lat: 41.9028, lon: 12.4964 },
+  'スペイン': { lat: 40.4168, lon: -3.7038 },
+  'オランダ': { lat: 52.3676, lon: 4.9041 },
+  'スイス': { lat: 46.9480, lon: 7.4474 },
+  'オーストリア': { lat: 48.2082, lon: 16.3738 },
+  'ベルギー': { lat: 50.8503, lon: 4.3517 },
+  'ポルトガル': { lat: 38.7223, lon: -9.1393 },
+  'ギリシャ': { lat: 37.9838, lon: 23.7275 },
+  '中国': { lat: 39.9042, lon: 116.4074 },
+  '韓国': { lat: 37.5665, lon: 126.9780 },
+  '台湾': { lat: 25.0330, lon: 121.5654 },
+  'タイ': { lat: 13.7563, lon: 100.5018 },
+  'ベトナム': { lat: 21.0285, lon: 105.8542 },
+  'シンガポール': { lat: 1.3521, lon: 103.8198 },
+  'マレーシア': { lat: 3.1390, lon: 101.6869 },
+  'インドネシア': { lat: -6.2088, lon: 106.8456 },
+  'フィリピン': { lat: 14.5995, lon: 120.9842 },
+  'インド': { lat: 28.6139, lon: 77.2090 },
+  'オーストラリア': { lat: -35.2809, lon: 149.1300 },
+  'ニュージーランド': { lat: -41.2865, lon: 174.7762 },
+  'ブラジル': { lat: -15.8267, lon: -47.9218 },
+  'アルゼンチン': { lat: -34.6037, lon: -58.3816 },
+  'チリ': { lat: -33.4489, lon: -70.6693 },
+  'エジプト': { lat: 30.0444, lon: 31.2357 },
+  '南アフリカ': { lat: -25.7479, lon: 28.2293 },
+  'トルコ': { lat: 39.9334, lon: 32.8597 },
+  'ロシア': { lat: 55.7558, lon: 37.6173 },
+  'アラブ首長国連邦': { lat: 25.2048, lon: 55.2708 },
+  'サウジアラビア': { lat: 24.7136, lon: 46.6753 }
 };
 
 // 緯度経度から3D座標に変換
@@ -193,15 +234,51 @@ function addVisitedMarkers() {
       markers.push(marker);
     }
   });
+  
+  // 海外の国のマーカーを追加
+  visitedCountries.forEach(countryName => {
+    const coord = countryCoordinates[countryName];
+    if (coord) {
+      const position = latLonToVector3(coord.lat, coord.lon, 102);
+      
+      // オレンジ色のマーカー（海外を区別）
+      const markerGeometry = new THREE.SphereGeometry(4, 16, 16); // 少し大きく
+      const markerMaterial = new THREE.MeshBasicMaterial({ 
+        color: 0xf59e0b, // オレンジ色
+        transparent: true,
+        opacity: 0.9
+      });
+      const marker = new THREE.Mesh(markerGeometry, markerMaterial);
+      marker.position.copy(position);
+      
+      // マーカーにデータを保存
+      marker.userData = {
+        country: countryName,
+        photoCount: countryPhotoCounts[countryName] || 0,
+        coordinate: coord,
+        isOverseas: true // 海外フラグ
+      };
+      
+      scene.add(marker);
+      markers.push(marker);
+    }
+  });
 }
 
 // 訪問済み都道府県を集計
 function displayVisitedPrefectures(posts) {
   visitedPrefectures.clear();
   prefecturePhotoCounts = {};
+  visitedCountries.clear();
+  countryPhotoCounts = {};
 
   posts.forEach(post => {
-    if (post.prefecture && post.prefecture !== '海外') {
+    if (post.prefecture === '海外' && post.country) {
+      // 海外の場合
+      visitedCountries.add(post.country);
+      countryPhotoCounts[post.country] = (countryPhotoCounts[post.country] || 0) + 1;
+    } else if (post.prefecture && post.prefecture !== '海外') {
+      // 国内の場合
       visitedPrefectures.add(post.prefecture);
       prefecturePhotoCounts[post.prefecture] = (prefecturePhotoCounts[post.prefecture] || 0) + 1;
     }
@@ -210,8 +287,9 @@ function displayVisitedPrefectures(posts) {
   // マーカーを追加
   addVisitedMarkers();
 
-  // 統計を更新
-  document.getElementById('visited-count').textContent = visitedPrefectures.size;
+  // 統計を更新（国内+海外の合計）
+  const totalVisited = visitedPrefectures.size + visitedCountries.size;
+  document.getElementById('visited-count').textContent = totalVisited;
   document.getElementById('photos-total').textContent = posts.length;
 }
 
@@ -337,6 +415,10 @@ function showPopup(data) {
   const existingPopup = document.getElementById('marker-popup');
   if (existingPopup) existingPopup.remove();
   
+  // 表示名を決定（都道府県 or 国名）
+  const locationName = data.isOverseas ? data.country : data.prefecture;
+  const markerColor = data.isOverseas ? '#f59e0b' : '#10b981';
+  
   // 新しいポップアップを作成
   const popup = document.createElement('div');
   popup.id = 'marker-popup';
@@ -353,13 +435,14 @@ function showPopup(data) {
       z-index: 1000;
       min-width: 200px;
       text-align: center;
+      border-top: 4px solid ${markerColor};
     ">
-      <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 20px;">${data.prefecture}</h3>
+      <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 20px;">${locationName}</h3>
       <p style="margin: 0; color: #64748b; font-size: 16px;">${data.photoCount}枚の写真</p>
       <button onclick="document.getElementById('marker-popup').remove()" style="
         margin-top: 15px;
         padding: 8px 20px;
-        background: #667eea;
+        background: ${markerColor};
         color: white;
         border: none;
         border-radius: 6px;
