@@ -85,7 +85,9 @@ function init() {
     0.1,
     1000
   );
-  camera.position.z = 300;
+  // 日本を正面に向ける（緯度36°、経度138°あたり）
+camera.position.set(50, 50, 250);
+camera.lookAt(0, 0, 0);
 
   // レンダラーの作成
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -96,7 +98,7 @@ function init() {
   // 地球の作成（白色ベース）
   const geometry = new THREE.SphereGeometry(100, 64, 64);
   const material = new THREE.MeshPhongMaterial({
-    color: 0xffffff,
+    color: 0x3b82f6,
     shininess: 5,
     transparent: true,
     opacity: 0.9
