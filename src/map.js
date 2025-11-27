@@ -7,6 +7,57 @@ import { getUserPosts } from './posts.js';
 let map = null;
 let geojsonLayer = null;
 
+// 英語→日本語の変換マップ
+const prefectureNameMap = {
+  'Hokkaido': '北海道',
+  'Aomori Ken': '青森県',
+  'Iwate Ken': '岩手県',
+  'Miyagi Ken': '宮城県',
+  'Akita Ken': '秋田県',
+  'Yamagata Ken': '山形県',
+  'Fukushima Ken': '福島県',
+  'Ibaraki Ken': '茨城県',
+  'Tochigi Ken': '栃木県',
+  'Gunma Ken': '群馬県',
+  'Saitama Ken': '埼玉県',
+  'Chiba Ken': '千葉県',
+  'Tokyo To': '東京都',
+  'Kanagawa Ken': '神奈川県',
+  'Niigata Ken': '新潟県',
+  'Toyama Ken': '富山県',
+  'Ishikawa Ken': '石川県',
+  'Fukui Ken': '福井県',
+  'Yamanashi Ken': '山梨県',
+  'Nagano Ken': '長野県',
+  'Gifu Ken': '岐阜県',
+  'Shizuoka Ken': '静岡県',
+  'Aichi Ken': '愛知県',
+  'Mie Ken': '三重県',
+  'Shiga Ken': '滋賀県',
+  'Kyoto Fu': '京都府',
+  'Osaka Fu': '大阪府',
+  'Hyogo Ken': '兵庫県',
+  'Nara Ken': '奈良県',
+  'Wakayama Ken': '和歌山県',
+  'Tottori Ken': '鳥取県',
+  'Shimane Ken': '島根県',
+  'Okayama Ken': '岡山県',
+  'Hiroshima Ken': '広島県',
+  'Yamaguchi Ken': '山口県',
+  'Tokushima Ken': '徳島県',
+  'Kagawa Ken': '香川県',
+  'Ehime Ken': '愛媛県',
+  'Kochi Ken': '高知県',
+  'Fukuoka Ken': '福岡県',
+  'Saga Ken': '佐賀県',
+  'Nagasaki Ken': '長崎県',
+  'Kumamoto Ken': '熊本県',
+  'Oita Ken': '大分県',
+  'Miyazaki Ken': '宮崎県',
+  'Kagoshima Ken': '鹿児島県',
+  'Okinawa Ken': '沖縄県'
+};
+
 // 都道府県の座標（中心点）
 const prefectureCoordinates = {
   '北海道': [43.064, 141.347],
@@ -98,7 +149,8 @@ async function loadPrefecturePolygons() {
 
 // 都道府県ごとのスタイルを設定
 function getStyle(feature) {
-  const prefName = feature.properties.nam || feature.properties.name || feature.properties.prefecture; // プロパティ名を複数試す
+  const prefNameEn = feature.properties.nam_en || feature.properties.name; // 英語名
+  const prefName = prefectureNameMap[prefNameEn]; // 日本語に変換
   const isVisited = visitedPrefectures.has(prefName);
   
   return {
@@ -112,7 +164,8 @@ function getStyle(feature) {
 
 // 各都道府県にイベントを設定
 function onEachFeature(feature, layer) {
-  const prefName = feature.properties.nam || feature.properties.name || feature.properties.prefecture;
+  const prefNameEn = feature.properties.nam_en || feature.properties.name; // 英語名
+  const prefName = prefectureNameMap[prefNameEn]; // 日本語に変換
   
   // マウスオーバー時
   layer.on('mouseover', function() {
@@ -133,12 +186,13 @@ function onEachFeature(feature, layer) {
     const photoCount = prefecturePhotoCounts[prefName] || 0;
     const status = visitedPrefectures.has(prefName) ? '訪問済み' : '未訪問';
     layer.bindPopup(`
-      <b>${prefName}</b><br>
+      <b>${prefName || prefNameEn}</b><br>
       ${status}<br>
       ${photoCount > 0 ? `${photoCount}枚の写真` : ''}
     `).openPopup();
   });
 }
+
 // 訪問済み都道府県を表示
 function displayVisitedPrefectures(posts) {
   // 訪問済み都道府県を集計
