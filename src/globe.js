@@ -115,6 +115,15 @@ scene.add(globe);
   directionalLight.position.set(5, 3, 5);
   scene.add(directionalLight);
 
+// OrbitControlsの追加（マウス/タッチ操作）
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true; // 滑らかな動き
+  controls.dampingFactor = 0.05;
+  controls.minDistance = 150; // 最小ズーム距離
+  controls.maxDistance = 500; // 最大ズーム距離
+  controls.enablePan = false; // パン（平行移動）を無効化
+  controls.autoRotate = false; // 自動回転をオフ（手動操作優先）
+
   // ウィンドウリサイズ対応
   window.addEventListener('resize', onWindowResize);
 
@@ -132,8 +141,8 @@ scene.add(globe);
 function animate() {
   requestAnimationFrame(animate);
 
-  // 地球を自動回転
-  globe.rotation.y += 0.001;
+ // OrbitControlsを更新（滑らかな動きのため）
+  controls.update();
 
   renderer.render(scene, camera);
 }
