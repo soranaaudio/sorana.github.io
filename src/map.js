@@ -81,8 +81,8 @@ function initMap() {
 // 都道府県ポリゴンを読み込む
 async function loadPrefecturePolygons() {
   try {
-    // GeoJSONを取得
-    const response = await fetch('https://raw.githubusercontent.com/smartnews-smri/japan-topography/main/data/prefecture.json');
+    // GeoJSONを取得（別のソースを使用）
+    const response = await fetch('https://geoshape.ex.nii.ac.jp/ka/resource/prefectures.geojson');
     const geojsonData = await response.json();
     
     // GeoJSONレイヤーを作成
@@ -98,7 +98,7 @@ async function loadPrefecturePolygons() {
 
 // 都道府県ごとのスタイルを設定
 function getStyle(feature) {
-  const prefName = feature.properties.nam_ja; // 都道府県名
+  const prefName = feature.properties.nam || feature.properties.name || feature.properties.prefecture; // プロパティ名を複数試す
   const isVisited = visitedPrefectures.has(prefName);
   
   return {
@@ -112,7 +112,7 @@ function getStyle(feature) {
 
 // 各都道府県にイベントを設定
 function onEachFeature(feature, layer) {
-  const prefName = feature.properties.nam_ja;
+  const prefName = feature.properties.nam || feature.properties.name || feature.properties.prefecture;
   
   // マウスオーバー時
   layer.on('mouseover', function() {
@@ -139,7 +139,6 @@ function onEachFeature(feature, layer) {
     `).openPopup();
   });
 }
-
 // 訪問済み都道府県を表示
 function displayVisitedPrefectures(posts) {
   // 訪問済み都道府県を集計
