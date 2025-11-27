@@ -99,7 +99,7 @@ camera.lookAt(0, 0, 0);
   const geometry = new THREE.SphereGeometry(100, 64, 64);
   // テクスチャローダーで地球画像を読み込み
 const textureLoader = new THREE.TextureLoader();
-const earthTexture = textureLoader.load('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg');
+const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
 
 const material = new THREE.MeshPhongMaterial({
   map: earthTexture,
