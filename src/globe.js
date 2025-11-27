@@ -123,7 +123,7 @@ scene.add(globe);
 
   // カスタムテクスチャを作成
   createCustomTexture();
-  
+
   // アニメーション開始
   animate();
 }
@@ -217,9 +217,9 @@ async function createCustomTexture() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     // 陸地を白で描画
-    ctx.fillStyle = '#ffffff';
-    ctx.strokeStyle = '#000000';
-    ctx.lineWidth = 1;
+    ctx.fillStyle = 'rgba(255, 255, 255, 1.0)';  // 完全不透明の白
+ctx.strokeStyle = '#000000';
+ctx.lineWidth = 1; 
     
     // 世界の国々を描画
     worldData.features.forEach(feature => {
