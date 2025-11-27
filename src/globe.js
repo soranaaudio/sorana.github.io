@@ -121,6 +121,9 @@ scene.add(globe);
   // ローディング非表示
   document.getElementById('loading').style.display = 'none';
 
+  // カスタムテクスチャを作成
+  createCustomTexture();
+  
   // アニメーション開始
   animate();
 }
