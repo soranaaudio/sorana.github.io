@@ -97,12 +97,14 @@ camera.lookAt(0, 0, 0);
 
   // 地球の作成（白色ベース）
   const geometry = new THREE.SphereGeometry(100, 64, 64);
-  const material = new THREE.MeshPhongMaterial({
-    color: 0x3b82f6,
-    shininess: 5,
-    transparent: true,
-    opacity: 0.9
-  });
+  // テクスチャローダーで地球画像を読み込み
+const textureLoader = new THREE.TextureLoader();
+const earthTexture = textureLoader.load('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg');
+
+const material = new THREE.MeshPhongMaterial({
+  map: earthTexture,
+  shininess: 5
+});
   globe = new THREE.Mesh(geometry, material);
   scene.add(globe);
 
