@@ -180,3 +180,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// ==========================================
+// ボトムナビゲーションのアクティブ状態
+// ==========================================
+
+document.addEventListener('DOMContentLoaded', () => {
+  const currentPath = window.location.pathname;
+  const navItems = document.querySelectorAll('.bottom-nav-item');
+  
+  navItems.forEach(item => {
+    const href = item.getAttribute('href');
+    
+    // 現在のページと一致する場合、activeクラスを追加
+    if (currentPath.includes(href) || 
+        (currentPath === '/' && href === 'index.html') ||
+        (currentPath.endsWith('/') && href === 'index.html')) {
+      item.classList.add('active');
+    }
+  });
+});
